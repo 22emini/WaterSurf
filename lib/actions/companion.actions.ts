@@ -8,12 +8,19 @@ export const createCompanion = async (formData: CreateCompanion) => {
     const { userId: author } = await auth();
     const supabase = createSupabaseClient();
 
+    // Debug: log the payload and author
+    console.log('Creating companion with:', { ...formData, author });
+
     const { data, error } = await supabase
         .from('companions')
-        .insert({...formData, author })
+        .insert({ ...formData, author })
         .select();
 
-    if(error || !data) throw new Error(error?.message || 'Failed to create a companion');
+    // Enhanced error logging
+    if(error || !data) {
+        // Throw a detailed error for debugging
+        throw new Error(`Failed to create a companion. Supabase error: ${JSON.stringify(error)} | Data: ${JSON.stringify(data)}`);
+    }
 
     return data[0];
 }
